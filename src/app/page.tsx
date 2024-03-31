@@ -59,6 +59,33 @@ const COLOR_FILTER = {
   ] as const,
 };
 
+const SIZE_FILTER = {
+  id: "size",
+  name: "Color",
+  options: [
+    { value: "S", label: "S" },
+    { value: "M", label: "M" },
+    { value: "L", label: "L" },
+  ] as const,
+};
+
+const PRICE_FILTERS = {
+  id: "price",
+  name: "Price",
+  options: [
+    { value: [0, 100], label: "Any Price" },
+    {
+      value: [0, 20],
+      label: "Under $20",
+    },
+    {
+      value: [0, 40],
+      label: "Under $40",
+    },
+    // custom option define in JSX
+  ],
+} as const;
+
 const DEFAULT_CUSTOM_PRICE = [0, 100] as [number, number];
 
 export default function Home() {
@@ -93,6 +120,7 @@ export default function Home() {
     value: string;
   }) => {
     const isFilterApplied = filter[category].includes(value as never);
+
     if (isFilterApplied) {
       setFilter((prev) => ({
         ...prev,
@@ -184,6 +212,78 @@ export default function Home() {
                         />
                         <label
                           htmlFor={`color-${optionIdx}`}
+                          className="ml-3 text-sm text-gray-600"
+                        >
+                          {option.label}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* size filter  */}
+              <AccordionItem value="size">
+                <AccordionTrigger className="py-3 text-sm text-gray-400 hover:text-gray-500">
+                  <span className="font-medium text-gray-900">Size</span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="space-y-4">
+                    {SIZE_FILTER.options.map((option, optionIdx) => (
+                      <li key={option.value} className="flex item-center">
+                        <input
+                          type="checkbox"
+                          id={`size-${optionIdx}`}
+                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                          checked={filter.size.includes(option.value)}
+                          onChange={() => {
+                            applyArrayFilter({
+                              category: "size",
+                              value: option.value,
+                            });
+                          }}
+                        />
+                        <label
+                          htmlFor={`size-${optionIdx}`}
+                          className="ml-3 text-sm text-gray-600"
+                        >
+                          {option.label}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+              {/* Price filter  */}
+              <AccordionItem value="price">
+                <AccordionTrigger className="py-3 text-sm text-gray-400 hover:text-gray-500">
+                  <span className="font-medium text-gray-900">Price</span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="space-y-4">
+                    {PRICE_FILTERS.options.map((option, optionIdx) => (
+                      <li key={option.label} className="flex item-center">
+                        <input
+                          type="radio"
+                          id={`price-${optionIdx}`}
+                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                          onChange={() => {
+                            setFilter((prev) => ({
+                              ...prev,
+                              price: {
+                                isCustom: false,
+                                range: [...option.value],
+                              },
+                            }));
+                          }}
+                          checked={
+                            !filter.price.isCustom &&
+                            filter.price.range[0] === option.value[0] &&
+                            filter.price.range[1] === option.value[1]
+                          }
+                        />
+                        <label
+                          htmlFor={`price-${optionIdx}`}
                           className="ml-3 text-sm text-gray-600"
                         >
                           {option.label}
